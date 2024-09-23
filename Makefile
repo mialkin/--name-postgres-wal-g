@@ -1,14 +1,11 @@
-STARTUP_PROJECT := src/Whatever
-DEFAULT_ENVIRONMENT := Ide
+.PHONY: copy-env
+copy-env:
+	cp -n .env.example .env | true
 
-.PHONY: run
-run:
-	dotnet run --project $(STARTUP_PROJECT)
+.PHONY: run-infrastructure
+run-infrastructure: copy-env
+	docker compose --file compose.yaml up
 
-.PHONY: watch
-watch:
-	dotnet watch --project $(STARTUP_PROJECT) --no-hot-reload
-
-.PHONY: test
-test:
-	dotnet test --environment ASPNETCORE_ENVIRONMENT=$(DEFAULT_ENVIRONMENT)
+.PHONY: shutdown-infrastructure
+shutdown-infrastructure:
+	docker compose --file compose.yaml down

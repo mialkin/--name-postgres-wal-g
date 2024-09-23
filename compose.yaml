@@ -3,12 +3,24 @@ services:
     build:
       context: .
       dockerfile: "Dockerfile"
-    container_name: postgres-wal-g
+    container_name: postgres-with-wal-g
     ports:
-      - "6050:5432"
+      - "${POSTGRES_PORT}:5432"
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: postgres
     volumes:
-      - ./volumes/postgres:/var/lib/postgresql/data  
+      - ./volumes/postgres:/var/lib/postgresql/data
+  minio:
+    image: quay.io/minio/minio:RELEASE.2024-09-13T20-26-02Z
+    container_name: minio-postgres-with-wal-g
+    environment:
+      MINIO_ROOT_USER: ROOTUSER
+      MINIO_ROOT_PASSWORD: ROOTUSER123
+    volumes:
+      - ./volumes/minio/data:/data
+    ports:
+      - "${MINIO_CONSOLE}:9000"
+      - "${MINIO_HTTP}:9090"
+    command: server /data --console-address ":9090"
